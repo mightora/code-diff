@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Diff – mightora.io</title>
+  <meta name="description" content="A free code diff tool by mightora.io. Paste two snippets, pick your language, and instantly see a syntax-highlighted diff with line numbers." />
+  <script>
+    (function() {
+      var saved = localStorage.getItem('mightora-diff-theme');
+      var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+
+  <!-- diff2html (vendored) -->
+  <link rel="stylesheet" href="vendor/diff2html.min.css" />
+  <script src="vendor/diff.min.js"></script>
+  <script src="vendor/diff2html.min.js"></script>
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --brand-purple:   #1c0835;
+      --brand-accent:   #7c3aed;
+      --brand-accent-h: #6d28d9;
+      --bg:             #0f0f0f;
+      --surface:        #1a1a1a;
+      --surface2:       #242424;
+      --border:         #333;
+      --text:           #e5e5e5;
+      --text-muted:     #888;
+      --nav-bg:         #160728;
+      --nav-text:       #f3f0ff;
+      --btn-bg:         #7c3aed;
+      --btn-hover:      #6d28d9;
+      --textarea-bg:    #111;
+      --textarea-text:  #d4d4d4;
+    }
+
+    [data-theme="light"] {
+      --bg:           #f9fafb;
+      --surface:      #ffffff;
+      --surface2:     #f3f4f6;
+      --border:       #e5e7eb;
+      --text:         #111827;
+      --text-muted:   #6b7280;
+      --textarea-bg:  #f8f9fa;
+      --textarea-text:#1f2937;
+    }
+
+    /* ── Reset & base ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Navbar ────────────────────────────────────────────────── */
+    nav {
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo-text span {
+      color: var(--brand-accent);
+    }
+
+    .nav-subtitle {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      padding-left: 0.75rem;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      margin-left: 0.25rem;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: #fff; }
+
+    /* ── Theme toggle ──────────────────────────────────────────── */
+    .theme-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0.35rem 0.5rem;
+      transition: background 0.15s;
+    }
+    .theme-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Main content ──────────────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 2rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Controls bar ──────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+      margin-bottom: 1.25rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus { border-color: var(--brand-accent); }
+
+    .radio-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .radio-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.8rem;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-btn.active,
+    .radio-btn:hover {
+      background: var(--brand-accent);
+      border-color: var(--brand-accent);
+      color: #fff;
+    }
+
+    .btn-compare {
+      background: var(--btn-bg);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.6rem 1.5rem;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-compare:hover  { background: var(--btn-hover); }
+    .btn-compare:active { transform: scale(0.98); }
+
+    .btn-clear {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.6rem 1rem;
+      transition: all 0.15s;
+    }
+    .btn-clear:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* ── Editor panes ──────────────────────────────────────────── */
+    .editors {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .editors { grid-template-columns: 1fr; }
+    }
+
+    .editor-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .editor-pane label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    textarea {
+      background: var(--textarea-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--textarea-text);
+      font-family: "Fira Code", "Cascadia Code", "Consolas", "Monaco", monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      padding: 0.75rem 1rem;
+      resize: vertical;
+      width: 100%;
+      min-height: 280px;
+      outline: none;
+      tab-size: 2;
+      transition: border-color 0.15s;
+    }
+    textarea:focus { border-color: var(--brand-accent); }
+
+    /* ── Diff output ───────────────────────────────────────────── */
+    .diff-section {
+      margin-top: 0.5rem;
+    }
+
+    .diff-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .diff-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .diff-stats {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .stat-add  { color: #4ade80; }
+    .stat-del  { color: #f87171; }
+
+    #diff-output {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* Override diff2html colours for dark mode */
+    [data-theme="dark"] .d2h-wrapper {
+      background: var(--surface);
+      color: var(--text);
+    }
+    [data-theme="dark"] .d2h-file-header,
+    [data-theme="dark"] .d2h-code-header {
+      background: #1e1e2e;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    [data-theme="dark"] .d2h-code-line,
+    [data-theme="dark"] .d2h-code-side-line {
+      background: var(--surface);
+    }
+    [data-theme="dark"] td.d2h-code-linenumber {
+      background: #1a1a2e;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+    [data-theme="dark"] .d2h-del {
+      background: rgba(239, 68, 68, 0.15);
+    }
+    [data-theme="dark"] .d2h-del td.d2h-code-linenumber { background: rgba(239, 68, 68, 0.2); }
+    [data-theme="dark"] .d2h-ins {
+      background: rgba(34, 197, 94, 0.12);
+    }
+    [data-theme="dark"] .d2h-ins td.d2h-code-linenumber { background: rgba(34, 197, 94, 0.2); }
+    [data-theme="dark"] .d2h-change {
+      background: rgba(251, 191, 36, 0.12);
+    }
+    [data-theme="dark"] .d2h-change td.d2h-code-linenumber { background: rgba(251, 191, 36, 0.2); }
+    [data-theme="dark"] del { background: rgba(239, 68, 68, 0.3); }
+    [data-theme="dark"] ins { background: rgba(34, 197, 94, 0.25); }
+    [data-theme="dark"] .d2h-file-list { background: var(--surface2); border-color: var(--border); }
+    [data-theme="dark"] .d2h-file-list li { border-color: var(--border); }
+
+    /* ── Empty / error states ──────────────────────────────────── */
+    .placeholder {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 3rem;
+      text-align: center;
+    }
+    .placeholder svg {
+      margin-bottom: 0.75rem;
+      opacity: 0.4;
+    }
+
+    .no-diff {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .no-diff .check { color: #4ade80; font-size: 1.5rem; }
+
+    /* ── Footer ────────────────────────────────────────────────── */
+    footer {
+      background: var(--brand-purple);
+      border-top: 1px solid rgba(124, 58, 237, 0.3);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.82rem;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    footer a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+    }
+    footer a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="https://mightora.io" target="_blank" rel="noopener">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="28" height="28" rx="6" fill="#7c3aed"/>
+      <path d="M6 21 L14 7 L22 21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M9.5 16 L18.5 16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-logo-text">mightora<span>.io</span></span>
+    <span class="nav-subtitle">Code Diff</span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="https://mightora.io" target="_blank" rel="noopener">Tools</a>
+    <button class="theme-btn" id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle light/dark mode">🌙</button>
+  </div>
+</nav>
+
+<!-- ── Main ───────────────────────────────────────────────────── -->
+<main>
+  <h1>Code Diff</h1>
+  <p class="subtitle">Paste two code snippets below, choose your language, and instantly see the difference with syntax highlighting and line numbers.</p>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="control-group">
+      <label for="language">Language</label>
+      <select id="language">
+        <option value="plaintext">Plain text</option>
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="python">Python</option>
+        <option value="csharp">C#</option>
+        <option value="java">Java</option>
+        <option value="cpp">C / C++</option>
+        <option value="go">Go</option>
+        <option value="rust">Rust</option>
+        <option value="php">PHP</option>
+        <option value="ruby">Ruby</option>
+        <option value="swift">Swift</option>
+        <option value="kotlin">Kotlin</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="scss">SCSS</option>
+        <option value="json">JSON</option>
+        <option value="yaml">YAML</option>
+        <option value="xml">XML</option>
+        <option value="markdown">Markdown</option>
+        <option value="bash">Bash / Shell</option>
+        <option value="powershell">PowerShell</option>
+        <option value="sql">SQL</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>View mode</label>
+      <div class="radio-group">
+        <span class="radio-btn active" data-mode="side-by-side" role="button" tabindex="0">Side by side</span>
+        <span class="radio-btn" data-mode="line-by-line" role="button" tabindex="0">Unified</span>
+      </div>
+    </div>
+
+    <div class="control-group" style="margin-left:auto; flex-direction:row; align-items:flex-end; gap:0.5rem;">
+      <button class="btn-clear" id="btn-clear">Clear</button>
+      <button class="btn-compare" id="btn-compare">Compare ›</button>
+    </div>
+  </div>
+
+  <!-- Editor panes -->
+  <div class="editors">
+    <div class="editor-pane">
+      <label for="code-original">Original</label>
+      <textarea id="code-original" spellcheck="false" placeholder="Paste the original code here…"></textarea>
+    </div>
+    <div class="editor-pane">
+      <label for="code-modified">Modified</label>
+      <textarea id="code-modified" spellcheck="false" placeholder="Paste the modified code here…"></textarea>
+    </div>
+  </div>
+
+  <!-- Diff output -->
+  <div class="diff-section" id="diff-section">
+    <div class="diff-header" id="diff-header" style="display:none">
+      <span class="diff-title">Diff Result</span>
+      <span class="diff-stats" id="diff-stats"></span>
+    </div>
+    <div id="diff-output">
+      <div class="placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <p>Enter code in both panels and click <strong>Compare ›</strong></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    A free tool by <a href="https://mightora.io" target="_blank" rel="noopener">mightora.io</a>
+    &mdash; Power Platform &amp; DevOps tools for modern teams.
+    &nbsp;|&nbsp;
+    <a href="https://github.com/mightora/code-diff" target="_blank" rel="noopener">View on GitHub</a>
+  </p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Theme ───────────────────────────────────────────────────── */
+  const root      = document.documentElement;
+  const themeBtn  = document.getElementById('theme-toggle');
+
+  function applyTheme(theme) {
+    root.dataset.theme = theme;
+    themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    themeBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    localStorage.setItem('mightora-diff-theme', theme);
+  }
+
+  const savedTheme = localStorage.getItem('mightora-diff-theme');
+  applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+  themeBtn.addEventListener('click', () => {
+    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ── View-mode toggle ────────────────────────────────────────── */
+  let outputType = 'side-by-side';
+  document.querySelectorAll('.radio-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      outputType = btn.dataset.mode;
+      if (lastDiffStr) renderDiff(lastDiffStr);
+    });
+    btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') btn.click(); });
+  });
+
+  /* ── Diff logic ──────────────────────────────────────────────── */
+  let lastDiffStr = '';
+
+  function buildUnifiedDiff(original, modified, filename) {
+    const patch = Diff.createPatch(filename, original, modified, '', '');
+    return patch;
+  }
+
+  function renderDiff(unifiedDiff) {
+    const diffOutput = document.getElementById('diff-output');
+    const diffHeader = document.getElementById('diff-header');
+    const diffStats  = document.getElementById('diff-stats');
+
+    const html = Diff2Html.html(unifiedDiff, {
+      drawFileList:  false,
+      matching:      'lines',
+      outputFormat:  outputType,
+      highlight:     false,
+      renderNothingWhenEmpty: false
+    });
+
+    diffOutput.innerHTML = html;
+    diffHeader.style.display = '';
+
+    // Count +/- lines
+    let added = 0, removed = 0;
+    unifiedDiff.split('\n').forEach(line => {
+      if (line.startsWith('+') && !line.startsWith('+++')) added++;
+      if (line.startsWith('-') && !line.startsWith('---')) removed++;
+    });
+
+    diffStats.innerHTML =
+      `<span class="stat-add">+${added} addition${added !== 1 ? 's' : ''}</span>` +
+      ` &nbsp; <span class="stat-del">-${removed} deletion${removed !== 1 ? 's' : ''}</span>`;
+  }
+
+  document.getElementById('btn-compare').addEventListener('click', () => {
+    const original = document.getElementById('code-original').value;
+    const modified = document.getElementById('code-modified').value;
+    const lang     = document.getElementById('language').value;
+    const filename = 'code.' + langExtension(lang);
+
+    if (!original.trim() && !modified.trim()) {
+      alert('Please paste code into at least one panel.');
+      return;
+    }
+
+    const unified = buildUnifiedDiff(original, modified, filename);
+    lastDiffStr = unified;
+
+    // Check if there are any differences
+    const hasChanges = unified.split('\n').some(line =>
+      (line.startsWith('+') && !line.startsWith('+++')) ||
+      (line.startsWith('-') && !line.startsWith('---'))
+    );
+
+    if (!hasChanges) {
+      document.getElementById('diff-output').innerHTML =
+        '<div class="no-diff"><div class="check">✓</div><p>The two snippets are identical — no differences found.</p></div>';
+      document.getElementById('diff-header').style.display = '';
+      document.getElementById('diff-stats').innerHTML =
+        '<span class="stat-add">+0 additions</span> &nbsp; <span class="stat-del">-0 deletions</span>';
+      lastDiffStr = '';
+      return;
+    }
+
+    renderDiff(unified);
+    document.getElementById('diff-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ── Clear ───────────────────────────────────────────────────── */
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    document.getElementById('code-original').value = '';
+    document.getElementById('code-modified').value = '';
+    document.getElementById('diff-output').innerHTML =
+      '<div class="placeholder">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>' +
+      '<p>Enter code in both panels and click <strong>Compare ›</strong></p></div>';
+    document.getElementById('diff-header').style.display = 'none';
+    lastDiffStr = '';
+  });
+
+  /* ── Tab key in textareas ────────────────────────────────────── */
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = ta.selectionStart;
+        const end   = ta.selectionEnd;
+        ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+        ta.selectionStart = ta.selectionEnd = start + 2;
+      }
+    });
+  });
+
+  /* ── Helper: lang → file extension ──────────────────────────── */
+  function langExtension(lang) {
+    const map = {
+      javascript: 'js', typescript: 'ts', python: 'py', csharp: 'cs',
+      java: 'java', cpp: 'cpp', go: 'go', rust: 'rs', php: 'php',
+      ruby: 'rb', swift: 'swift', kotlin: 'kt', html: 'html', css: 'css',
+      scss: 'scss', json: 'json', yaml: 'yaml', xml: 'xml', markdown: 'md',
+      bash: 'sh', powershell: 'ps1', sql: 'sql', plaintext: 'txt'
+    };
+    return map[lang] || 'txt';
+  }
+
+})();
+</script>
+</body>
+</html>
