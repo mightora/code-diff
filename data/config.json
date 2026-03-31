@@ -1,0 +1,14 @@
+{
+  "author": {
+    "name": "mightora.io",
+    "image": "https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png",
+    "bio": "Power Platform & DevOps tools for modern teams. Free developer tools built with care.",
+    "branding": {
+      "label": "mightora.io"
+    },
+    "links": [
+      { "label": "mightora.io", "url": "https://mightora.io" },
+      { "label": "GitHub", "url": "https://github.com/mightora" }
+    ]
+  }
+}
