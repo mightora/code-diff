@@ -27,3 +27,9 @@ See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). VS Code is linked, not bun
 ## Verification
 
 `node --check app.js`; DOM integration checks use jsdom when available and ZIP archives are independently checked with Python zipfile. Browser layout/actual script execution requires a manual browser smoke test.
+
+## Mightora brand guidelines
+
+Brand source: https://raw.githubusercontent.com/mightora/radar.mightora.io/refs/heads/main/design-system.instructions.md
+
+`design-system.instructions.md` is an exact copy of that source at the time of this update. The shared UI CDN controls header, author, footer and theme styling. `styles.css` complements shared tokens and scopes app controls to `main`, preserving the shared component styles. The static author fallback uses the prescribed images and class structure and appears immediately above the footer. The original footer YAML fetch patch and js-yaml-before-components execution order are retained. The shared header provides the only theme toggle. Quick navigation offsets include the header and the actual navigation height.

@@ -18,381 +18,13 @@
   <script src="vendor/diff.min.js"></script>
   <script src="vendor/diff2html.min.js"></script>
 
-  <style>
-    /* ── Design tokens ─────────────────────────────────────────── */
-    :root {
-      --brand-purple:   #1c0835;
-      --brand-accent:   #7c3aed;
-      --brand-accent-h: #6d28d9;
-      --bg:             #0f0f0f;
-      --surface:        #1a1a1a;
-      --surface2:       #242424;
-      --border:         #333;
-      --text:           #e5e5e5;
-      --text-muted:     #888;
-      --nav-bg:         #160728;
-      --nav-text:       #f3f0ff;
-      --btn-bg:         #7c3aed;
-      --btn-hover:      #6d28d9;
-      --textarea-bg:    #111;
-      --textarea-text:  #d4d4d4;
-    }
 
-    [data-theme="light"] {
-      --bg:           #f9fafb;
-      --surface:      #ffffff;
-      --surface2:     #f3f4f6;
-      --border:       #e5e7eb;
-      --text:         #111827;
-      --text-muted:   #6b7280;
-      --textarea-bg:  #f8f9fa;
-      --textarea-text:#1f2937;
-    }
-
-    /* ── Reset & base ──────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Navbar ────────────────────────────────────────────────── */
-    nav {
-      background: var(--nav-bg);
-      border-bottom: 1px solid rgba(124, 58, 237, 0.3);
-      padding: 0 1.5rem;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-    }
-
-    .nav-logo-text {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.02em;
-    }
-
-    .nav-logo-text span {
-      color: var(--brand-accent);
-    }
-
-    .nav-subtitle {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.5);
-      padding-left: 0.75rem;
-      border-left: 1px solid rgba(255,255,255,0.2);
-      margin-left: 0.25rem;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .nav-link {
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      font-size: 0.875rem;
-      transition: color 0.15s;
-    }
-    .nav-link:hover { color: #fff; }
-
-    /* ── Theme toggle ──────────────────────────────────────────── */
-    .theme-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 6px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 1rem;
-      line-height: 1;
-      padding: 0.35rem 0.5rem;
-      transition: background 0.15s;
-    }
-    .theme-btn:hover { background: rgba(255,255,255,0.2); }
-
-    /* ── Main content ──────────────────────────────────────────── */
-    main {
-      flex: 1;
-      padding: 2rem 1.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 2rem;
-    }
-
-    /* ── Controls bar ──────────────────────────────────────────── */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-end;
-      margin-bottom: 1.25rem;
-    }
-
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    select {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 0.9rem;
-      padding: 0.5rem 0.75rem;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    select:focus { border-color: var(--brand-accent); }
-
-    .radio-group {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .radio-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0.45rem 0.8rem;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .radio-btn.active,
-    .radio-btn:hover {
-      background: var(--brand-accent);
-      border-color: var(--brand-accent);
-      color: #fff;
-    }
-
-    .btn-compare {
-      background: var(--btn-bg);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.6rem 1.5rem;
-      transition: background 0.15s, transform 0.1s;
-      white-space: nowrap;
-    }
-    .btn-compare:hover  { background: var(--btn-hover); }
-    .btn-compare:active { transform: scale(0.98); }
-
-    .btn-clear {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding: 0.6rem 1rem;
-      transition: all 0.15s;
-    }
-    .btn-clear:hover { border-color: var(--text-muted); color: var(--text); }
-
-    /* ── Editor panes ──────────────────────────────────────────── */
-    .editors {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-    }
-
-    @media (max-width: 768px) {
-      .editors { grid-template-columns: 1fr; }
-    }
-
-    .editor-pane {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .editor-pane label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    textarea {
-      background: var(--textarea-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--textarea-text);
-      font-family: "Fira Code", "Cascadia Code", "Consolas", "Monaco", monospace;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      padding: 0.75rem 1rem;
-      resize: vertical;
-      width: 100%;
-      min-height: 280px;
-      outline: none;
-      tab-size: 2;
-      transition: border-color 0.15s;
-    }
-    textarea:focus { border-color: var(--brand-accent); }
-
-    /* ── Diff output ───────────────────────────────────────────── */
-    .diff-section {
-      margin-top: 0.5rem;
-    }
-
-    .diff-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
-    }
-
-    .diff-title {
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .diff-stats {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-    .stat-add  { color: #4ade80; }
-    .stat-del  { color: #f87171; }
-
-    #diff-output {
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    /* Override diff2html colours for dark mode */
-    [data-theme="dark"] .d2h-wrapper {
-      background: var(--surface);
-      color: var(--text);
-    }
-    [data-theme="dark"] .d2h-file-header,
-    [data-theme="dark"] .d2h-code-header {
-      background: #1e1e2e;
-      border-color: var(--border);
-      color: var(--text);
-    }
-    [data-theme="dark"] .d2h-code-line,
-    [data-theme="dark"] .d2h-code-side-line {
-      background: var(--surface);
-    }
-    [data-theme="dark"] td.d2h-code-linenumber {
-      background: #1a1a2e;
-      border-color: var(--border);
-      color: var(--text-muted);
-    }
-    [data-theme="dark"] .d2h-del {
-      background: rgba(239, 68, 68, 0.15);
-    }
-    [data-theme="dark"] .d2h-del td.d2h-code-linenumber { background: rgba(239, 68, 68, 0.2); }
-    [data-theme="dark"] .d2h-ins {
-      background: rgba(34, 197, 94, 0.12);
-    }
-    [data-theme="dark"] .d2h-ins td.d2h-code-linenumber { background: rgba(34, 197, 94, 0.2); }
-    [data-theme="dark"] .d2h-change {
-      background: rgba(251, 191, 36, 0.12);
-    }
-    [data-theme="dark"] .d2h-change td.d2h-code-linenumber { background: rgba(251, 191, 36, 0.2); }
-    [data-theme="dark"] del { background: rgba(239, 68, 68, 0.3); }
-    [data-theme="dark"] ins { background: rgba(34, 197, 94, 0.25); }
-    [data-theme="dark"] .d2h-file-list { background: var(--surface2); border-color: var(--border); }
-    [data-theme="dark"] .d2h-file-list li { border-color: var(--border); }
-
-    /* ── Empty / error states ──────────────────────────────────── */
-    .placeholder {
-      background: var(--surface);
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      padding: 3rem;
-      text-align: center;
-    }
-    .placeholder svg {
-      margin-bottom: 0.75rem;
-      opacity: 0.4;
-    }
-
-    .no-diff {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .no-diff .check { color: #4ade80; font-size: 1.5rem; }
-
-    /* ── Footer ────────────────────────────────────────────────── */
-    footer {
-      background: var(--brand-purple);
-      border-top: 1px solid rgba(124, 58, 237, 0.3);
-      color: rgba(255,255,255,0.6);
-      font-size: 0.82rem;
-      padding: 1.25rem 1.5rem;
-      text-align: center;
-    }
-    footer a {
-      color: rgba(255,255,255,0.8);
-      text-decoration: none;
-    }
-    footer a:hover { color: #fff; }
-  </style>
 <link rel="canonical" href="https://mightora.github.io/code-diff/">
 <meta property="og:title" content="Mightora Code Diff — Small changes. Clear answers."><meta property="og:description" content="Free browser-local code comparison and HTML, CSS, JavaScript playground."><meta property="og:type" content="website"><meta property="og:url" content="https://mightora.github.io/code-diff/">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/shared.css">
 <script>const originalFetch=window.fetch.bind(window);window.fetch=async(...args)=>{const response=await originalFetch(...args);const url=typeof args[0]==='string'?args[0]:args[0]?.url||'';if(url.includes('footer.yaml')&&response.ok){const raw=await response.clone().text();return new Response(raw.replace(/\t/g,'  '),{status:response.status,headers:response.headers});}return response;};</script>
 <script defer src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script><script defer src="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/components.js"></script>
-<link rel="stylesheet" href="app.css"><script defer src="app.js"></script>
+<link rel="stylesheet" href="styles.css"><script defer src="app.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Mightora Code Diff","url":"https://mightora.github.io/code-diff/","applicationCategory":"DeveloperApplication","operatingSystem":"Any modern web browser","browserRequirements":"JavaScript enabled","description":"Compare code snippets and web project files with local sandboxed HTML, CSS and JavaScript previews.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"creator":{"@type":"Person","name":"Ian Tweedie","url":"https://techtweedie.github.io"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a code diff?", "acceptedAnswer": {"@type": "Answer", "text": "A code diff identifies changes between two versions of text. Added and removed lines help locate a regression, review a fix or check configuration changes. This comparator works with JavaScript, CSS, HTML, JSON, SQL, PowerShell and other text formats."}}, {"@type": "Question", "name": "Does my code leave my browser?", "acceptedAnswer": {"@type": "Answer", "text": "The comparison runs in your browser. Snippets and imported project files are not uploaded or saved automatically. The page loads shared Mightora branding assets from external services. Downloads remain under your control."}}, {"@type": "Question", "name": "Can I compare web page output?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Run two HTML, CSS and JavaScript projects in isolated frames at the same width. Compare the rendered pages visually and inspect each console. This is a manual visual comparison, not an automated pixel difference test."}}, {"@type": "Question", "name": "Why can identical-looking snippets differ?", "acceptedAnswer": {"@type": "Answer", "text": "Spaces, line endings and a missing final newline can produce differences. Line endings are normalised for comparison. The whitespace option ignores leading and trailing spaces on each line, but retains changes within the line."}}, {"@type": "Question", "name": "Can it run Python, C# or Node.js?", "acceptedAnswer": {"@type": "Answer", "text": "These files can be compared as text. The preview executes browser HTML, CSS and JavaScript only. Node.js, databases and backend applications need a separate runtime."}}, {"@type": "Question", "name": "Is VS Code included or embedded?", "acceptedAnswer": {"@type": "Answer", "text": "No. The tool links to Microsoft\u2019s VS Code for the Web and can launch an installed desktop editor. Code\u2013OSS source is MIT licensed; Microsoft\u2019s VS Code distribution has a separate product licence. See the official licence FAQ and Code\u2013OSS licence."}}]}</script>
 </head>
@@ -400,8 +32,8 @@
 
 <!-- ── Navbar ─────────────────────────────────────────────────── -->
 <a class="skip" href="#tool">Skip to comparison</a>
-<mightora-header site-name="Code Diff" site-url="./" logo-light="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" logo-dark="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" nav-links='[{"label":"Compare","url":"#tool"},{"label":"Guide","url":"#guide"},{"label":"Mightora.io ↗","url":"https://mightora.io","ext":true}]'><a href="https://mightora.io"><img width="180" alt="Mightora" src="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png"></a></mightora-header>
-<nav class="quick-jump-nav"><a href="#tool">Compare code</a><a href="#projects">Web playground</a><a href="#ide">VS Code</a><a href="#guide">How it works</a><button class="theme-btn" id="theme-toggle" aria-label="Toggle colour theme">Theme</button></nav>
+<mightora-header site-name="Code Diff" site-url="./" theme-key="mightora-diff-theme" logo-light="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" logo-dark="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" nav-links='[{"label":"Compare","url":"#tool"},{"label":"Guide","url":"#guide"},{"label":"Mightora.io ↗","url":"https://mightora.io","ext":true}]'><a href="https://mightora.io"><img width="180" alt="Mightora" src="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png"></a></mightora-header>
+<nav class="quick-jump-nav"><a href="#tool">Compare code</a><a href="#projects">Web playground</a><a href="#ide">VS Code</a><a href="#guide">How it works</a></nav>
 
 <!-- ── Main ───────────────────────────────────────────────────── -->
 <main>
@@ -490,33 +122,56 @@
 </section>
 <section id="ide"><div class="eyebrow">ROOM TO GO DEEPER</div><h2>Continue in VS Code.</h2><p>Download a workspace containing both projects, extract it, and open the folder in VS Code. Your unsaved snippets cannot be transferred automatically to another website.</p><div class="toolbar"><button id="workspace">Download workspace ZIP</button><a class="button" href="https://vscode.dev" target="_blank" rel="noopener">Open VS Code in browser ↗</a></div><label for="folder-path">Extracted folder’s absolute path (optional, desktop VS Code)</label><input id="folder-path" type="text" placeholder="C:\Users\you\Downloads\mightora-diff or /Users/you/mightora-diff"><button id="desktop">Launch desktop VS Code</button><p id="ide-status" role="status"></p><p class="note">Desktop launch requires an installed VS Code URL handler and browser approval. Browser VS Code supports local folders in compatible browsers; terminal and server runtimes require other tooling.</p></section>
 <section id="guide"><div class="eyebrow">A QUICK TROUBLESHOOTING GUIDE</div><h2>How to compare code online</h2><ol><li>Paste or import the original and modified code.</li><li>Select a file extension and choose side by side or unified view.</li><li>Press Compare to see additions, deletions and word changes.</li><li>For web problems, load both versions into the playground and compare their source, rendered layout and console output.</li></ol><div class="faq"><article><h3>What is a code diff?</h3><p>A code diff identifies changes between two versions of text. Added and removed lines help locate a regression, review a fix or check configuration changes. This comparator works with JavaScript, CSS, HTML, JSON, SQL, PowerShell and other text formats.</p></article><article><h3>Does my code leave my browser?</h3><p>The comparison runs in your browser. Snippets and imported project files are not uploaded or saved automatically. The page loads shared Mightora branding assets from external services. Downloads remain under your control.</p></article><article><h3>Can I compare web page output?</h3><p>Yes. Run two HTML, CSS and JavaScript projects in isolated frames at the same width. Compare the rendered pages visually and inspect each console. This is a manual visual comparison, not an automated pixel difference test.</p></article><article><h3>Why can identical-looking snippets differ?</h3><p>Spaces, line endings and a missing final newline can produce differences. Line endings are normalised for comparison. The whitespace option ignores leading and trailing spaces on each line, but retains changes within the line.</p></article><article><h3>Can it run Python, C# or Node.js?</h3><p>These files can be compared as text. The preview executes browser HTML, CSS and JavaScript only. Node.js, databases and backend applications need a separate runtime.</p></article><article><h3>Is VS Code included or embedded?</h3><p>No. The tool links to Microsoft’s VS Code for the Web and can launch an installed desktop editor. Code–OSS source is MIT licensed; Microsoft’s VS Code distribution has a separate product licence. See the <a href="https://code.visualstudio.com/docs/supporting/faq">official licence FAQ</a> and <a href="https://github.com/microsoft/vscode/blob/main/LICENSE.txt">Code–OSS licence</a>.</p></article></div></section>
-<mightora-author><h2>Built by TechTweedie</h2><p>Code Diff is a free practical developer tool created by <strong>Ian Tweedie</strong> (TechTweedie), a technology consultant and developer based in North East England. <a href="https://techtweedie.github.io">Read the blog</a>.</p></mightora-author>
+
 </main>
 
+<mightora-author>
+  <div class="author-section-overlay">
+    <div class="author-section-inner">
+      <div class="author-photos">
+        <img src="https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png" alt="Ian Tweedie" class="author-avatar" />
+        <img src="https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png" alt="TechTweedie" class="author-blog-logo" />
+      </div>
+      <div class="author-text">
+        <h2 class="author-heading">Built by TechTweedie</h2>
+        <p class="author-bio">
+          Code Diff is a free tool created by <strong>Ian Tweedie</strong> — also known online as <strong>TechTweedie</strong>. Ian is a technology consultant and developer based in North East England with a background in enterprise IT, cloud infrastructure, and developer tooling. He builds free, practical tools and writes about technology on his blog.
+        </p>
+        <div class="author-links">
+          <a href="https://techtweedie.github.io" target="_blank" rel="noopener" class="author-link"><i class="fas fa-blog"></i> Blog</a>
+          <a href="https://github.com/itweedie" target="_blank" rel="noopener" class="author-link"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</mightora-author>
+
 <!-- ── Footer ─────────────────────────────────────────────────── -->
-<mightora-footer><p>Code Diff by <a href="https://mightora.io">Mightora</a> · <a href="https://github.com/mightora/code-diff">Source on GitHub</a> · <a href="THIRD-PARTY-NOTICES.md">Licences and notices</a></p></mightora-footer>
+<mightora-footer>
+  <div class="container">
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        Code Diff by <a href="https://mightora.io" target="_blank" rel="noopener noreferrer">Mightora</a>.
+        Source on <a href="https://github.com/mightora/code-diff" target="_blank" rel="noopener noreferrer">GitHub</a>.
+      </div>
+      <div class="footer-bottom-links">
+        <a href="THIRD-PARTY-NOTICES.md">Licences and notices</a>
+        <span class="site-footer__note">Static developer tools for GitHub Pages.</span>
+      </div>
+    </div>
+  </div>
+</mightora-footer>
 
 <script>
 (function () {
   'use strict';
 
-  /* ── Theme ───────────────────────────────────────────────────── */
-  const root      = document.documentElement;
-  const themeBtn  = document.getElementById('theme-toggle');
-
-  function applyTheme(theme) {
-    root.dataset.theme = theme;
-    themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-    themeBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    try { localStorage.setItem('mightora-diff-theme', theme); } catch {}
-  }
-
-  let savedTheme; try { savedTheme = localStorage.getItem('mightora-diff-theme'); } catch {}
-  applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-
-  themeBtn.addEventListener('click', () => {
-    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-  });
+  // Keep hash targets clear of the shared header and wrapped quick navigation.
+  const quickNav = document.querySelector('.quick-jump-nav');
+  const updateNavHeight = () => document.documentElement.style.setProperty('--quick-nav-h', quickNav.getBoundingClientRect().height + 'px');
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(updateNavHeight).observe(quickNav);
+  window.addEventListener('resize', updateNavHeight);
+  updateNavHeight();
 
   /* ── View-mode toggle ────────────────────────────────────────── */
   let outputType = 'side-by-side';
@@ -646,3 +301,4 @@
 </script>
 </body>
 </html>
+
