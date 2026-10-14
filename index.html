@@ -40,7 +40,8 @@
   <div class="eyebrow">MIGHTORA DEVELOPER TOOLS · FREE · BROWSER LOCAL</div><h1>Small changes.<br><span>Clear answers.</span></h1>
   <p class="subtitle">Compare two snippets or whole web experiments. Find the change, see its effect, and get back to building.</p>
 
-  <section id="tool" aria-label="Code comparison"><div class="toolbar"><button id="example">Load example</button><button id="swap">Swap sides</button><button id="patch">Download diff</button><label><input id="ignore-space" type="checkbox"> Ignore surrounding whitespace</label></div>
+  <section id="tool" aria-label="Code comparison"><div class="toolbar"><label for="snippet-sample">Sample</label><select id="snippet-sample"><option value="total">JavaScript · Fix an order total</option><option value="css">CSS · Make a card responsive</option><option value="html">HTML · Add an accessible form label</option><option value="json">JSON · Compare environment settings</option><option value="sql">SQL · Filter active customers</option><option value="python">Python · Fix a range boundary</option><option value="powershell">PowerShell · Filter before counting</option></select><button id="example">Load sample</button><button id="swap">Swap sides</button><button id="patch">Download diff</button><label><input id="ignore-space" type="checkbox"> Ignore surrounding whitespace</label></div>
+  <p id="sample-description" class="note" role="status">Choose a sample, then press Load sample to populate both snippets.</p>
   <!-- Controls -->
   <div class="controls">
     <div class="control-group">
@@ -116,7 +117,7 @@
   </div>
 </section>
 <section id="projects"><div class="section-heading"><div class="eyebrow">BEYOND THE SOURCE</div><h2>Compare what the browser sees.</h2><p>Two independent web projects. Edit or import HTML, CSS and JavaScript, compare each file, then run both sides.</p></div>
-<div class="toolbar"><button id="web-example">Load web example</button><button id="run" class="btn-compare">Run both previews</button><button id="stop">Stop previews</button><label for="viewport">Preview width</label><select id="viewport"><option value="100%">Responsive</option><option value="375px">Phone · 375px</option><option value="768px">Tablet · 768px</option><option value="1024px">Desktop · 1024px</option></select><label><input type="checkbox" id="scripts"> Enable JavaScript</label></div>
+<div class="toolbar"><label for="web-sample">Web sample</label><select id="web-sample"><option value="counter">Counter · Fix a double increment</option><option value="responsive">Layout · Fix a phone overflow</option><option value="selector">JavaScript · Fix a missing element selector</option><option value="contrast">CSS · Improve button contrast</option><option value="numbers">Form · Fix text treated as a number</option></select><button id="web-example">Load web sample</button><button id="run" class="btn-compare">Run both previews</button><button id="stop">Stop previews</button><label for="viewport">Preview width</label><select id="viewport"><option value="100%">Responsive</option><option value="375px">Phone · 375px</option><option value="768px">Tablet · 768px</option><option value="1024px">Desktop · 1024px</option></select><label><input type="checkbox" id="scripts"> Enable JavaScript</label></div>
 <p class="note">Previews run only when you press Run. JavaScript is optional. Preview network access is blocked; remote libraries, server code, package builds and module imports are not supported. Use local files with relative references.</p>
 <div class="editors" id="project-panes"></div><p id="project-status" role="status"></p>
 </section>
@@ -301,4 +302,5 @@
 </script>
 </body>
 </html>
+
 
