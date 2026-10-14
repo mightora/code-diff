@@ -1,0 +1,8 @@
+# Mightora Code Diff
+> Free static browser-local code comparison and web preview tool by Ian Tweedie.
+
+- [Tool and guide](https://mightora.github.io/code-diff/): compare two snippets, import files, generate a patch, compare two browser web experiments.
+- [Source and documentation](https://github.com/mightora/code-diff): static GitHub Pages implementation.
+- [Licences](https://mightora.github.io/code-diff/THIRD-PARTY-NOTICES.md): third-party components and VS Code licence distinction.
+
+Previews support HTML, CSS and classic browser JavaScript. No backend execution, module/package runtime, automated pixel comparison or automatic transfer into VS Code. Code is not uploaded by this tool.

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Diff – mightora.io</title>
-  <meta name="description" content="A free code diff tool by mightora.io. Paste two snippets, pick your language, and instantly see a syntax-highlighted diff with line numbers." />
+  <title>Free Code Diff & Web Preview Comparator | Mightora</title>
+  <meta name="description" content="Compare code online for free. Find line and word changes, compare web project files, and run HTML, CSS and JavaScript previews locally in your browser." />
   <script>
     (function() {
-      var saved = localStorage.getItem('mightora-diff-theme');
+      var saved; try { saved = localStorage.getItem('mightora-diff-theme'); } catch {}
       var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
     })();
@@ -387,31 +387,28 @@
     }
     footer a:hover { color: #fff; }
   </style>
+<link rel="canonical" href="https://mightora.github.io/code-diff/">
+<meta property="og:title" content="Mightora Code Diff — Small changes. Clear answers."><meta property="og:description" content="Free browser-local code comparison and HTML, CSS, JavaScript playground."><meta property="og:type" content="website"><meta property="og:url" content="https://mightora.github.io/code-diff/">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/shared.css">
+<script>const originalFetch=window.fetch.bind(window);window.fetch=async(...args)=>{const response=await originalFetch(...args);const url=typeof args[0]==='string'?args[0]:args[0]?.url||'';if(url.includes('footer.yaml')&&response.ok){const raw=await response.clone().text();return new Response(raw.replace(/\t/g,'  '),{status:response.status,headers:response.headers});}return response;};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script><script defer src="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/components.js"></script>
+<link rel="stylesheet" href="app.css"><script defer src="app.js"></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Mightora Code Diff","url":"https://mightora.github.io/code-diff/","applicationCategory":"DeveloperApplication","operatingSystem":"Any modern web browser","browserRequirements":"JavaScript enabled","description":"Compare code snippets and web project files with local sandboxed HTML, CSS and JavaScript previews.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"creator":{"@type":"Person","name":"Ian Tweedie","url":"https://techtweedie.github.io"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a code diff?", "acceptedAnswer": {"@type": "Answer", "text": "A code diff identifies changes between two versions of text. Added and removed lines help locate a regression, review a fix or check configuration changes. This comparator works with JavaScript, CSS, HTML, JSON, SQL, PowerShell and other text formats."}}, {"@type": "Question", "name": "Does my code leave my browser?", "acceptedAnswer": {"@type": "Answer", "text": "The comparison runs in your browser. Snippets and imported project files are not uploaded or saved automatically. The page loads shared Mightora branding assets from external services. Downloads remain under your control."}}, {"@type": "Question", "name": "Can I compare web page output?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Run two HTML, CSS and JavaScript projects in isolated frames at the same width. Compare the rendered pages visually and inspect each console. This is a manual visual comparison, not an automated pixel difference test."}}, {"@type": "Question", "name": "Why can identical-looking snippets differ?", "acceptedAnswer": {"@type": "Answer", "text": "Spaces, line endings and a missing final newline can produce differences. Line endings are normalised for comparison. The whitespace option ignores leading and trailing spaces on each line, but retains changes within the line."}}, {"@type": "Question", "name": "Can it run Python, C# or Node.js?", "acceptedAnswer": {"@type": "Answer", "text": "These files can be compared as text. The preview executes browser HTML, CSS and JavaScript only. Node.js, databases and backend applications need a separate runtime."}}, {"@type": "Question", "name": "Is VS Code included or embedded?", "acceptedAnswer": {"@type": "Answer", "text": "No. The tool links to Microsoft\u2019s VS Code for the Web and can launch an installed desktop editor. Code\u2013OSS source is MIT licensed; Microsoft\u2019s VS Code distribution has a separate product licence. See the official licence FAQ and Code\u2013OSS licence."}}]}</script>
 </head>
 <body>
 
 <!-- ── Navbar ─────────────────────────────────────────────────── -->
-<nav>
-  <a class="nav-brand" href="https://mightora.io" target="_blank" rel="noopener">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="28" height="28" rx="6" fill="#7c3aed"/>
-      <path d="M6 21 L14 7 L22 21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M9.5 16 L18.5 16" stroke="white" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span class="nav-logo-text">mightora<span>.io</span></span>
-    <span class="nav-subtitle">Code Diff</span>
-  </a>
-  <div class="nav-right">
-    <a class="nav-link" href="https://mightora.io" target="_blank" rel="noopener">Tools</a>
-    <button class="theme-btn" id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle light/dark mode">🌙</button>
-  </div>
-</nav>
+<a class="skip" href="#tool">Skip to comparison</a>
+<mightora-header site-name="Code Diff" site-url="./" logo-light="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" logo-dark="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" nav-links='[{"label":"Compare","url":"#tool"},{"label":"Guide","url":"#guide"},{"label":"Mightora.io ↗","url":"https://mightora.io","ext":true}]'><a href="https://mightora.io"><img width="180" alt="Mightora" src="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png"></a></mightora-header>
+<nav class="quick-jump-nav"><a href="#tool">Compare code</a><a href="#projects">Web playground</a><a href="#ide">VS Code</a><a href="#guide">How it works</a><button class="theme-btn" id="theme-toggle" aria-label="Toggle colour theme">Theme</button></nav>
 
 <!-- ── Main ───────────────────────────────────────────────────── -->
 <main>
-  <h1>Code Diff</h1>
-  <p class="subtitle">Paste two code snippets below, choose your language, and instantly see the difference with syntax highlighting and line numbers.</p>
+  <div class="eyebrow">MIGHTORA DEVELOPER TOOLS · FREE · BROWSER LOCAL</div><h1>Small changes.<br><span>Clear answers.</span></h1>
+  <p class="subtitle">Compare two snippets or whole web experiments. Find the change, see its effect, and get back to building.</p>
 
+  <section id="tool" aria-label="Code comparison"><div class="toolbar"><button id="example">Load example</button><button id="swap">Swap sides</button><button id="patch">Download diff</button><label><input id="ignore-space" type="checkbox"> Ignore surrounding whitespace</label></div>
   <!-- Controls -->
   <div class="controls">
     <div class="control-group">
@@ -461,11 +458,11 @@
   <div class="editors">
     <div class="editor-pane">
       <label for="code-original">Original</label>
-      <textarea id="code-original" spellcheck="false" placeholder="Paste the original code here…"></textarea>
+      <input type="file" id="import-original" aria-label="Import original file"><textarea id="code-original" spellcheck="false" placeholder="Paste the original code here…"></textarea>
     </div>
     <div class="editor-pane">
       <label for="code-modified">Modified</label>
-      <textarea id="code-modified" spellcheck="false" placeholder="Paste the modified code here…"></textarea>
+      <input type="file" id="import-modified" aria-label="Import modified file"><textarea id="code-modified" spellcheck="false" placeholder="Paste the modified code here…"></textarea>
     </div>
   </div>
 
@@ -475,7 +472,7 @@
       <span class="diff-title">Diff Result</span>
       <span class="diff-stats" id="diff-stats"></span>
     </div>
-    <div id="diff-output">
+    <div id="diff-output" aria-live="polite">
       <div class="placeholder">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -485,17 +482,19 @@
       </div>
     </div>
   </div>
+</section>
+<section id="projects"><div class="section-heading"><div class="eyebrow">BEYOND THE SOURCE</div><h2>Compare what the browser sees.</h2><p>Two independent web projects. Edit or import HTML, CSS and JavaScript, compare each file, then run both sides.</p></div>
+<div class="toolbar"><button id="web-example">Load web example</button><button id="run" class="btn-compare">Run both previews</button><button id="stop">Stop previews</button><label for="viewport">Preview width</label><select id="viewport"><option value="100%">Responsive</option><option value="375px">Phone · 375px</option><option value="768px">Tablet · 768px</option><option value="1024px">Desktop · 1024px</option></select><label><input type="checkbox" id="scripts"> Enable JavaScript</label></div>
+<p class="note">Previews run only when you press Run. JavaScript is optional. Preview network access is blocked; remote libraries, server code, package builds and module imports are not supported. Use local files with relative references.</p>
+<div class="editors" id="project-panes"></div><p id="project-status" role="status"></p>
+</section>
+<section id="ide"><div class="eyebrow">ROOM TO GO DEEPER</div><h2>Continue in VS Code.</h2><p>Download a workspace containing both projects, extract it, and open the folder in VS Code. Your unsaved snippets cannot be transferred automatically to another website.</p><div class="toolbar"><button id="workspace">Download workspace ZIP</button><a class="button" href="https://vscode.dev" target="_blank" rel="noopener">Open VS Code in browser ↗</a></div><label for="folder-path">Extracted folder’s absolute path (optional, desktop VS Code)</label><input id="folder-path" type="text" placeholder="C:\Users\you\Downloads\mightora-diff or /Users/you/mightora-diff"><button id="desktop">Launch desktop VS Code</button><p id="ide-status" role="status"></p><p class="note">Desktop launch requires an installed VS Code URL handler and browser approval. Browser VS Code supports local folders in compatible browsers; terminal and server runtimes require other tooling.</p></section>
+<section id="guide"><div class="eyebrow">A QUICK TROUBLESHOOTING GUIDE</div><h2>How to compare code online</h2><ol><li>Paste or import the original and modified code.</li><li>Select a file extension and choose side by side or unified view.</li><li>Press Compare to see additions, deletions and word changes.</li><li>For web problems, load both versions into the playground and compare their source, rendered layout and console output.</li></ol><div class="faq"><article><h3>What is a code diff?</h3><p>A code diff identifies changes between two versions of text. Added and removed lines help locate a regression, review a fix or check configuration changes. This comparator works with JavaScript, CSS, HTML, JSON, SQL, PowerShell and other text formats.</p></article><article><h3>Does my code leave my browser?</h3><p>The comparison runs in your browser. Snippets and imported project files are not uploaded or saved automatically. The page loads shared Mightora branding assets from external services. Downloads remain under your control.</p></article><article><h3>Can I compare web page output?</h3><p>Yes. Run two HTML, CSS and JavaScript projects in isolated frames at the same width. Compare the rendered pages visually and inspect each console. This is a manual visual comparison, not an automated pixel difference test.</p></article><article><h3>Why can identical-looking snippets differ?</h3><p>Spaces, line endings and a missing final newline can produce differences. Line endings are normalised for comparison. The whitespace option ignores leading and trailing spaces on each line, but retains changes within the line.</p></article><article><h3>Can it run Python, C# or Node.js?</h3><p>These files can be compared as text. The preview executes browser HTML, CSS and JavaScript only. Node.js, databases and backend applications need a separate runtime.</p></article><article><h3>Is VS Code included or embedded?</h3><p>No. The tool links to Microsoft’s VS Code for the Web and can launch an installed desktop editor. Code–OSS source is MIT licensed; Microsoft’s VS Code distribution has a separate product licence. See the <a href="https://code.visualstudio.com/docs/supporting/faq">official licence FAQ</a> and <a href="https://github.com/microsoft/vscode/blob/main/LICENSE.txt">Code–OSS licence</a>.</p></article></div></section>
+<mightora-author><h2>Built by TechTweedie</h2><p>Code Diff is a free practical developer tool created by <strong>Ian Tweedie</strong> (TechTweedie), a technology consultant and developer based in North East England. <a href="https://techtweedie.github.io">Read the blog</a>.</p></mightora-author>
 </main>
 
 <!-- ── Footer ─────────────────────────────────────────────────── -->
-<footer>
-  <p>
-    A free tool by <a href="https://mightora.io" target="_blank" rel="noopener">mightora.io</a>
-    &mdash; Power Platform &amp; DevOps tools for modern teams.
-    &nbsp;|&nbsp;
-    <a href="https://github.com/mightora/code-diff" target="_blank" rel="noopener">View on GitHub</a>
-  </p>
-</footer>
+<mightora-footer><p>Code Diff by <a href="https://mightora.io">Mightora</a> · <a href="https://github.com/mightora/code-diff">Source on GitHub</a> · <a href="THIRD-PARTY-NOTICES.md">Licences and notices</a></p></mightora-footer>
 
 <script>
 (function () {
@@ -509,10 +508,10 @@
     root.dataset.theme = theme;
     themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
     themeBtn.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    localStorage.setItem('mightora-diff-theme', theme);
+    try { localStorage.setItem('mightora-diff-theme', theme); } catch {}
   }
 
-  const savedTheme = localStorage.getItem('mightora-diff-theme');
+  let savedTheme; try { savedTheme = localStorage.getItem('mightora-diff-theme'); } catch {}
   applyTheme(savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
   themeBtn.addEventListener('click', () => {
@@ -535,7 +534,8 @@
   let lastDiffStr = '';
 
   function buildUnifiedDiff(original, modified, filename) {
-    const patch = Diff.createPatch(filename, original, modified, '', '');
+    const patch = Diff.createPatch(filename, original, modified, '', '', {timeout:1500});
+    if (!patch) throw Error('Comparison exceeded its time budget. Try a smaller snippet.');
     return patch;
   }
 
@@ -547,6 +547,7 @@
     const html = Diff2Html.html(unifiedDiff, {
       drawFileList:  false,
       matching:      'lines',
+      diffStyle: 'word',
       outputFormat:  outputType,
       highlight:     false,
       renderNothingWhenEmpty: false
@@ -568,8 +569,10 @@
   }
 
   document.getElementById('btn-compare').addEventListener('click', () => {
-    const original = document.getElementById('code-original').value;
-    const modified = document.getElementById('code-modified').value;
+    let original = document.getElementById('code-original').value.replace(/\r\n?/g, '\n');
+    let modified = document.getElementById('code-modified').value.replace(/\r\n?/g, '\n');
+    if (document.getElementById('ignore-space').checked) { original=original.split('\n').map(x=>x.trim()).join('\n'); modified=modified.split('\n').map(x=>x.trim()).join('\n'); }
+    if (original.length + modified.length > 400000) { alert('Please use files under 200 KB each for a responsive comparison.'); return; }
     const lang     = document.getElementById('language').value;
     const filename = 'code.' + langExtension(lang);
 
@@ -578,7 +581,7 @@
       return;
     }
 
-    const unified = buildUnifiedDiff(original, modified, filename);
+    let unified; try { unified = buildUnifiedDiff(original, modified, filename); } catch(error) { document.getElementById('diff-output').textContent=error.message; return; }
     lastDiffStr = unified;
 
     // Check if there are any differences
@@ -597,7 +600,7 @@
       return;
     }
 
-    renderDiff(unified);
+    try { renderDiff(unified); } catch (error) { document.getElementById('diff-output').textContent='Comparison failed: '+error.message; }
     document.getElementById('diff-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
@@ -617,7 +620,7 @@
   /* ── Tab key in textareas ────────────────────────────────────── */
   document.querySelectorAll('textarea').forEach(ta => {
     ta.addEventListener('keydown', e => {
-      if (e.key === 'Tab') {
+      if (e.key === 'Tab' && !e.shiftKey) {
         e.preventDefault();
         const start = ta.selectionStart;
         const end   = ta.selectionEnd;
