@@ -38,6 +38,10 @@ jobs:
           touch _site/.nojekyll
 
       - name: Upload artifact
+        - name: Bundle shared Mightora footer
+          uses: mightora/shared-ui/.github/actions/sync-footer@main
+          with:
+            output-directory: _site
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
